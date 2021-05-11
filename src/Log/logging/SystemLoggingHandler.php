@@ -17,9 +17,12 @@ class SystemLoggingHandler extends AbstractProcessingHandler
     protected function write(array $record): void
     {
         ScSystemLog::create([
+            'incident_code' => $record['context']['incidentCode'],
             'message' => $record['message'],
             'formatted_message' => $record['formatted'],
-            'trace' => $record['context']['trace']
+            'trace' => $record['context']['trace'],
+            'level' => $record['level'],
+            'level_name' => $record['level_name'],
         ]);
     }
 

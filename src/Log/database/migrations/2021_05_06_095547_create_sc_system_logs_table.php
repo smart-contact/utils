@@ -15,9 +15,12 @@ class CreateScSystemLogsTable extends Migration
     {
         Schema::create('sc_system_logs', function (Blueprint $table) {
             $table->id();
+            $table->text("level")->nullable();
+            $table->text("level_name")->nullable();
             $table->text("message");
             $table->longText("formatted_message");
             $table->json("trace")->nullable();
+            $table->text('incident_code')->nullable();
             $table->timestamp('log_at')->useCurrent();
         });
     }

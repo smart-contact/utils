@@ -18,26 +18,29 @@ class ResponseMacroServiceProvider extends ServiceProvider
         Response::macro('success', function ($message, $data) {
             return Response::json([
                 'message' => $message,
-                'data' => $data,
+                'data' => $data
             ]);
         });
 
-        Response::macro('validationErrors', function ($errors) {
+        Response::macro('validationErrors', function ($errors, $incidentCode) {
             return response::json([
                 'message' => __('responses.errors.validation'),
-                'errors' => $errors
+                'errors' => $errors,
+                'incident-code' => $incidentCode
             ], ResponseCode::HTTP_UNPROCESSABLE_ENTITY);
         });
 
-        Response::macro('unauthorized', function () {
+        Response::macro('unauthorized', function ($incidentCode) {
            return response::json([
-               'message' => __('responses.errors.unauthorized')
+               'message' => __('responses.errors.unauthorized'),
+               'incident-code' => $incidentCode
            ], ResponseCode::HTTP_FORBIDDEN);
         });
 
-        Response::macro('modelNotFound', function () {
+        Response::macro('modelNotFound', function ($incidentCode) {
             return response::json([
-                'message' => __('responses.errors.model_not_found')
+                'message' => __('responses.errors.model_not_found'),
+                'incident-code' => $incidentCode
             ], ResponseCode::HTTP_NOT_FOUND);
         });
     }

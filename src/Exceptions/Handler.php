@@ -3,9 +3,11 @@
 namespace SmartContact\Exceptions;
 
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Container\Container;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Throwable;
 
@@ -21,6 +23,7 @@ class Handler extends ExceptionHandler
     ];
 
     protected bool $override = false;
+    protected string $incidentCode;
 
     /**
      * A list of the inputs that are never flashed for validation exceptions.
@@ -32,6 +35,12 @@ class Handler extends ExceptionHandler
         'password',
         'password_confirmation',
     ];
+
+    public function __construct(Container $container)
+    {
+        $this->incidentCode = Str::uuid();
+        parent::__construct($container);
+    }
 
     public function render($request, Throwable $e)
     {
@@ -45,15 +54,15 @@ class Handler extends ExceptionHandler
             $response = $this->retrieveResponse($e);
 
             if($e instanceof ModelNotFoundException) {
-                return response()->modelNotFound();
+                return response()->modelNotFound($this->incidentCode);
             }
 
             if($e instanceof AuthorizationException) {
-                return response()->unauthorized();
+                return response()->unauthorized($this->incidentCode);
             }
 
             if($e instanceof ValidationException) {
-                return response()->validationErrors($e->errors());
+                return response()->validationErrors($e->errors(), $this->incidentCode);
             }
 
             if(! $this->override) {
@@ -89,6 +98,8 @@ class Handler extends ExceptionHandler
     {
         if (config('app.debug')) {
             return [
+                'incidentCode' => $this->incidentCode ?? null,
+                'message' => $e->getMessage(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
                 'trace' => $e->getTraceAsString()
@@ -105,6 +116,7 @@ class Handler extends ExceptionHandler
     {
         return [
             'trace' => $exception->getTrace(),
+            'incidentCode' => $this->incidentCode
         ];
     }
 }
