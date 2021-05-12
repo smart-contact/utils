@@ -23,7 +23,7 @@ class ScApiHttpRequest
     public function handle(Request $request, Closure $next)
     {
         $requestAll = array_map(function($r) {
-            return Str::length($r) > 1000 ? Str::limit($r, 1000) : $r;
+            return is_string($r) && Str::length($r) > 1000 ? Str::limit($r, 1000) : $r;
         }, $request->all());
 
         $this->log = ScApiHttpLog::create([
