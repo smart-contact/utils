@@ -22,8 +22,8 @@ class Handler extends ExceptionHandler
         //
     ];
 
-    protected bool $override = false;
-    protected string $incidentCode;
+    protected $override = false;
+    protected $incidentCode;
 
     /**
      * A list of the inputs that are never flashed for validation exceptions.
