@@ -41,11 +41,13 @@ class DatawarehouseServiceProvider extends ServiceProvider
     {
         $this->app->bind(DatawarehouseInterface::class, function() {
             $datawarehouse = Config::get('sc_datawarehouse.datawarehouse');
-            switch($datawarehouse) {
-                case 'google': {
-                    return new BigQuery();
+            if($datawarehouse) {
+                switch($datawarehouse) {
+                    case 'google': {
+                        return new BigQuery();
+                    }
+                    default: throw new DatawarehouseServiceNotFound();
                 }
-                default: throw new DatawarehouseServiceNotFound();
             }
         });
     }
